@@ -2,7 +2,7 @@
 
 A simple web-based Task Reminder application.
 
-## Features
+## Features (CRUD Operations)
 - Add task with date & time
 - View tasks
 - Mark task as Finished or Pending
@@ -19,4 +19,4 @@ A simple web-based Task Reminder application.
 2. Place project inside htdocs
 3. Import database
 4. Open:
-   http://localhost/task_reminder
+   http://localhost/frontend/task_reminder
