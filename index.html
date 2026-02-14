@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Task Reminder</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+.container {
+  width: 90%;
+  max-width: 900px;
+  margin: auto;
+  padding: 30px;
+  color: white;
+}
+
+h1 {
+  text-align: center;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  display: grid;
+  gap: 10px;
+  margin-bottom: 30px;
+  color: black;
+}
+
+.card input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.card button {
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #667eea;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.list {
+  display: grid;
+  gap: 15px;
+}
+
+.task-card {
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.finish {
+  background: green;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.pending {
+  background: orange;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.delete {
+  background: red;
+  color: white;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+  <h1>Task Reminder</h1>
+
+  <div class="card">
+    <input id="task_name" placeholder="Task name">
+    <input id="due_date" type="datetime-local">
+    <button onclick="addTask()">Add Task</button>
+    <p id="msg"></p>
+  </div>
+
+  <div class="list" id="taskList"></div>
+</div>
+
+<script>
+function addTask(){
+  let name = task_name.value;
+  let date = due_date.value;
+  if(!name || !date){ alert("Enter all fields"); return; }
+
+  fetch("../backend/add_task.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`task_name=${name}&due_date=${date}`
+  })
+  .then(r=>r.text())
+  .then(m=>{ msg.innerText=m; loadTasks(); });
+}
+
+function loadTasks(){
+  fetch("../backend/get_task.php")
+  .then(r=>r.json())
+  .then(data=>{
+    taskList.innerHTML="";
+    data.forEach(t=>{
+      taskList.innerHTML += `
+      <div class="task-card">
+        <b>${t.task_name}</b><br>
+        ${t.due_date}<br>
+        Status: ${t.status=="finished"?"✅ Finished":"⏳ Pending"}
+
+        <div class="btn-group">
+          <button class="${t.status=="finished"?"pending":"finish"}"
+            onclick="toggleStatus(${t.id})">
+            ${t.status=="finished"?"Mark Pending":"Mark Finished"}
+          </button>
+
+          <button class="delete" onclick="deleteTask(${t.id})">
+            Delete
+          </button>
+        </div>
+      </div>`;
+    });
+  });
+}
+
+function toggleStatus(id){
+  fetch("../backend/update_task.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`id=${id}`
+  }).then(()=>loadTasks());
+}
+
+function deleteTask(id){
+  fetch("../backend/delete_task.php",{
+    method:"POST",
+    headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    body:`id=${id}`
+  }).then(()=>loadTasks());
+}
+
+loadTasks();
+</script>
+</body>
+</html>
