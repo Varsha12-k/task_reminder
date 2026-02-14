@@ -18,5 +18,5 @@ A simple web-based Task Reminder application.
 1. Start Apache & MySQL in XAMPP
 2. Place project inside htdocs
 3. Import database
-4. Open:
-   http://localhost/frontend/task_reminder
+4. Open in browser:
+   http://localhost/task_reminder/frontend/index.html
