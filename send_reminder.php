@@ -2,7 +2,6 @@
 date_default_timezone_set("Asia/Kolkata");
 
 include "db.php";
-composer require twilio/sdk
 
 // current date & time (minute-level)
 $current_time = date("Y-m-d H:i");
@@ -24,3 +23,4 @@ while ($row = mysqli_fetch_assoc($result)) {
     echo "🔔 Reminder: ".$row['task_name']." at ".$row['due_date']."<br>";
 }
 ?>
+
